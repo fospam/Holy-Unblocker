@@ -1,4 +1,4 @@
-name: Build and deploy Holy Unblocker to Azure Web App
+name: Build and Deploy Holy Unblocker to Azure Web App
 
 on:
   push:
@@ -48,19 +48,19 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      - name: 'Log in to Azure'
+      - name: 'Login to Azure'
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }} # Ensure this secret contains the JSON object
-
-      - name: 'Set subscription'
-        run: az account set --subscription "02dec82c-5ec7-4a2a-83cc-a6e51834c0f6"
+          client-id: ${{ secrets.AzureClientId }}
+          client-secret: ${{ secrets.AzureClientSecret }}
+          tenant-id: ${{ secrets.AzureTenantId }}
+          subscription-id: ${{ secrets.AzureSubscriptionId }}
+          auth-type: 'service-principal'
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Algebra12'
+          app-name: 'Algebra12' # Your Azure App Service name
           slot-name: 'Production'
-          package: .
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a9c8d9eab7b44f38de5f3aab9cb91f6 }}
+          package: . # Adjust if necessary
