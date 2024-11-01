@@ -52,10 +52,10 @@ jobs:
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AzureClientId }}
-          client-secret: ${{ secrets.AzureClientSecret }}
+          creds: ${{ secrets.AzureClientSecret }} # Use creds instead of client-secret
           tenant-id: ${{ secrets.AzureTenantId }}
           subscription-id: ${{ secrets.AzureSubscriptionId }}
-          auth-type: 'service-principal'
+          auth-type: 'SERVICE_PRINCIPAL' # Correct casing here
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
