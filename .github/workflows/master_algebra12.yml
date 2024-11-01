@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and Deploy Node.js Apps to Azure Web App
+name: Build and deploy Node.js app to Azure Web App - Algebra12
 
 on:
   push:
@@ -21,39 +18,19 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install and build Algebra12
+      - name: npm install and build
         run: |
-          cd Algebra12
           npm install
           npm run build --if-present
 
-      - name: Zip artifact for Algebra12 deployment
-        run: |
-          cd Algebra12
-          zip -r ../algebra12-release.zip ./*
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
-      - name: npm install and build Holy Unblocker
-        run: |
-          cd HolyUnblocker
-          npm install
-          npm run build --if-present
-
-      - name: Zip artifact for Holy Unblocker deployment
-        run: |
-          cd HolyUnblocker
-          zip -r ../holy-unblocker-release.zip ./*
-
-      - name: Upload artifacts for deployment jobs
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: algebra12-app
-          path: algebra12-release.zip
-
-      - name: Upload artifacts for deployment jobs
-        uses: actions/upload-artifact@v4
-        with:
-          name: holy-unblocker-app
-          path: holy-unblocker-release.zip
+          name: holy-unblocker
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -61,42 +38,21 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
-      - name: Download artifact for Algebra12
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: algebra12-app
+          name: holy-unblocker
 
-      - name: Unzip artifact for Algebra12 deployment
-        run: unzip algebra12-release.zip
-
-      - name: Download artifact for Holy Unblocker
-        uses: actions/download-artifact@v4
-        with:
-          name: holy-unblocker-app
-
-      - name: Unzip artifact for Holy Unblocker deployment
-        run: unzip holy-unblocker-release.zip
-
-      - name: 'Deploy Algebra12 to Azure Web App'
-        id: deploy-algebra12
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+      
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Algebra12' # Your Azure App Service name for Algebra12
+          app-name: 'Algebra12'
           slot-name: 'Production'
-          package: ./Algebra12 # Adjust if necessary
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6C5F98351E154D6CB468A349FEFE8CF6 }}
-
-      - name: 'Login to Azure'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURECREDENTIALS }} # Use the JSON secret
-
-      - name: 'Deploy Holy Unblocker to Azure Web App'
-        id: deploy-holy-unblocker
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'HolyUnblocker' # Your Azure App Service name for Holy Unblocker
-          slot-name: 'Production'
-          package: ./HolyUnblocker # Adjust if necessary
