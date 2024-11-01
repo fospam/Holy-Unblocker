@@ -51,11 +51,7 @@ jobs:
       - name: 'Login to Azure'
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AzureClientId }}
-          creds: ${{ secrets.AzureClientSecret }} # Make sure this is correct
-          tenant-id: ${{ secrets.AzureTenantId }}
-          subscription-id: ${{ secrets.AzureSubscriptionId }}
-          auth-type: 'SERVICE_PRINCIPAL'
+          creds: ${{ secrets.AZURECREDENTIALS }} # Use the JSON secret
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
