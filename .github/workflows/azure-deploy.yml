@@ -52,7 +52,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'YourAzureAppName'
+          app-name: 'Algebra12'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a9c8d9eab7b44f38de5f3aab9cb91f6 }}
