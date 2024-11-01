@@ -14,21 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+          cache: 'npm'  # Enable caching for npm dependencies
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build --if-present
+
+      - name: Run tests
+        run: npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip -r release.zip ./* -x '*.git*' '*.github*'  # Exclude unnecessary files
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,12 +56,12 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-      
-      - name: 'Deploy to Azure Web App'
+
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Algebra12'
+          app-name: 'Algebra12'  # Ensure this is the correct name of your Azure Web App
           slot-name: 'Production'
-          package: .
+          package: .  # The path to the package (current directory after unzip)
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6C5F98351E154D6CB468A349FEFE8CF6 }}
